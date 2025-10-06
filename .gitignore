@@ -1,0 +1,32 @@
+# Ignorar reportes y mapas generados por el script (nombres antiguos y nuevos)
+reporte_trafico*.txt
+mapa_trafico*.html
+
+# Ignorar caches y archivos temporales
+.cache/
+cache/
+.osmnx_cache/
+.osmnx/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+ENV/
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
