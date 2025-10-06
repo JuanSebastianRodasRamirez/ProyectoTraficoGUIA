@@ -1,0 +1,21 @@
+# Requirements para Extractor de Tráfico Urbano
+# Instalar con: pip install -r requirements.txt
+
+# Dependencias principales para análisis de redes urbanas
+osmnx>=1.6.0
+networkx>=3.0
+folium>=0.14.0
+pandas>=1.5.0
+numpy>=1.24.0
+geopandas>=0.12.0
+
+# Dependencias para visualización y mapas
+matplotlib>=3.6.0
+requests>=2.28.0
+
+# Dependencias del sistema
+urllib3>=1.26.0
+certifi>=2022.12.7
+
+# Opcional: para análisis avanzados
+scipy>=1.10.0
