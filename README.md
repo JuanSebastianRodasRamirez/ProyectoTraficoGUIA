@@ -3,12 +3,12 @@
 Descripción
 -----------
 
-Este proyecto contiene una utilidad en Python llamada `ExtractorTraficoLegal.py` que extrae y analiza información de la red vial de una ciudad usando fuentes libres y legales (principalmente OpenStreetMap via OSMnx). El script realiza los siguientes pasos:
+Este proyecto contiene una utilidad en Python llamada `ExtractorTrafico.py` que extrae y analiza información de la red vial de una ciudad usando fuentes libres y legales (principalmente OpenStreetMap via OSMnx). El script realiza los siguientes pasos:
 
 - Descarga la red vial (calles e intersecciones) de una ciudad.
 - Analiza las intersecciones por grado (simples, en T, complejas).
 - Identifica y clasifica los tipos de vías.
-- Busca semáforos etiquetados en OSM y estima semáforos adicionales.
+- Busca semáforos etiquetados en OSM (solo datos reales).
 - Estima un nivel de tráfico general basado en hora y día.
 - Genera un reporte de texto y un mapa HTML resumen.
 
@@ -16,8 +16,8 @@ Características
 ---------------
 
 - Uso de OSMnx y NetworkX para análisis de redes urbanas.
-- Generación automática de un reporte de texto (`reporte_trafico_legal_YYYYMMDD_HHMMSS.txt`).
-- Creación de un mapa interactivo en HTML (`mapa_trafico_legal_YYYYMMDD_HHMMSS.html`) con marcadores de intersecciones.
+- Generación automática de un reporte de texto (`reporte_traficoYYYYMMDD_HHMMSS.txt`).
+- Creación de un mapa interactivo en HTML (`mapa_traficoYYYYMMDD_HHMMSS.html`) con marcadores de intersecciones.
 - Menú interactivo para seleccionar ciudades predefinidas.
 
 Requisitos
@@ -57,7 +57,7 @@ Uso
 Ejecutar el script principal desde la raíz del proyecto:
 
 ```powershell
-python ExtractorTraficoLegal.py
+python ExtractorTrafico.py
 ```
 
 El script mostrará un menú para seleccionar una ciudad (Cali, Bogotá, Medellín, Barranquilla, Cartagena). Tras seleccionar, realizará el análisis completo. Dependiendo de la conexión y el área, la descarga y el procesamiento pueden tardar varios minutos.
@@ -65,15 +65,15 @@ El script mostrará un menú para seleccionar una ciudad (Cali, Bogotá, Medell�
 Archivos generados
 ------------------
 
-- `reporte_trafico_legal_YYYYMMDD_HHMMSS.txt` — reporte de texto con estadísticas y conclusiones.
-- `mapa_trafico_legal_YYYYMMDD_HHMMSS.html` — mapa interactivo con marcadores y un panel informativo.
+- `reporte_traficoYYYYMMDD_HHMMSS.txt` — reporte de texto con estadísticas y conclusiones.
+- `mapa_traficoYYYYMMDD_HHMMSS.html` — mapa interactivo con marcadores y un panel informativo.
 
 Consideraciones y limitaciones
 ------------------------------
 
 - El análisis de tráfico es estimado y no usa datos en tiempo real. Para datos en tiempo real se requieren APIs oficiales (p. ej. APIs municipales o servicios comerciales).
 - La calidad de los resultados depende de la calidad del mapeo en OpenStreetMap en la región analizada.
-- Algunos elementos (por ejemplo semáforos) pueden no estar etiquetados en OSM; el script realiza estimaciones complementarias.
+- Los semáforos reportados son únicamente aquellos etiquetados en OpenStreetMap; si no hay datos disponibles en OSM, se reportará 0.
 
 Buenas prácticas
 ----------------

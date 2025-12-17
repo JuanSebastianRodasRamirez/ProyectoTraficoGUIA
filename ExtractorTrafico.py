@@ -173,41 +173,26 @@ class ExtractorTrafico:
         try:
             # Buscar elementos marcados como semáforos
             tags = {"highway": "traffic_signals"}
-            semaforos = ox.geometries_from_place(self.ciudad, tags)
+            semaforos = ox.features_from_place(self.ciudad, tags)
             
             num_semaforos_osm = len(semaforos)
             print(f"✅ Semáforos encontrados en OSM: {num_semaforos_osm}")
             
-            # Estimar semáforos adicionales basado en intersecciones complejas
-            intersecciones_complejas = self.estadisticas.get('intersecciones_complejas', 0)
-            semaforos_estimados = min(intersecciones_complejas, int(intersecciones_complejas * 0.3))
-            
-            total_semaforos = num_semaforos_osm + semaforos_estimados
-            
-            print(f"   • Confirmados en OSM: {num_semaforos_osm}")
-            print(f"   • Estimados adicionales: {semaforos_estimados}")
-            print(f"   • Total estimado: {total_semaforos}")
-            
-            # Guardar estadísticas
+            # Guardar estadísticas (solo datos reales de OSM)
             self.estadisticas['semaforos_osm'] = num_semaforos_osm
-            self.estadisticas['semaforos_estimados'] = semaforos_estimados
-            self.estadisticas['semaforos_total'] = total_semaforos
+            self.estadisticas['semaforos_total'] = num_semaforos_osm
             
-            return total_semaforos
+            return num_semaforos_osm
             
         except Exception as e:
             print(f"⚠️  Error buscando semáforos: {e}")
-            # Estimación basada solo en intersecciones
-            intersecciones_complejas = self.estadisticas.get('intersecciones_complejas', 0)
-            semaforos_estimados = int(intersecciones_complejas * 0.25)
+            print(f"   • No se pudieron obtener datos de semáforos")
             
-            print(f"   • Estimación basada en intersecciones: {semaforos_estimados}")
-            
+            # Si hay error, no reportar estimaciones
             self.estadisticas['semaforos_osm'] = 0
-            self.estadisticas['semaforos_estimados'] = semaforos_estimados
-            self.estadisticas['semaforos_total'] = semaforos_estimados
+            self.estadisticas['semaforos_total'] = 0
             
-            return semaforos_estimados
+            return 0
     
     def estimar_trafico_actual(self):
         """Estima condiciones de tráfico basado en hora y tipos de vía"""
@@ -313,9 +298,8 @@ class ExtractorTrafico:
         
         reporte += f"""
 🚦 ANÁLISIS DE SEMÁFOROS:
-• Semáforos confirmados en OSM: {self.estadisticas.get('semaforos_osm', 0)}
-• Semáforos estimados adicionales: {self.estadisticas.get('semaforos_estimados', 0)}
-• Total estimado de semáforos: {self.estadisticas.get('semaforos_total', 0)}
+• Semáforos registrados en OSM: {self.estadisticas.get('semaforos_osm', 0)}
+• Total de semáforos: {self.estadisticas.get('semaforos_total', 0)}
 
 🚗 ANÁLISIS DE TRÁFICO ACTUAL:
 • Hora de análisis: {self.estadisticas.get('trafico', {}).get('hora', 'N/A')}
@@ -412,18 +396,23 @@ Generado: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
             # Agregar información en el mapa
             info_html = f'''
             <div style="position: fixed; 
-                        top: 10px; left: 10px; width: 300px; height: 150px; 
+                        top: 10px; left: 10px; width: 320px; height: auto; 
                         background-color: white; border:2px solid grey; z-index:9999; 
-                        font-size:12px; padding: 10px">
-            <h4>Análisis de Tráfico - {self.ciudad}</h4>
-            <b>Intersecciones:</b> {self.estadisticas.get('intersecciones', 0):,}<br>
-            <b>Calles:</b> {self.estadisticas.get('calles_nombradas', 0):,}<br>
-            <b>Semáforos:</b> {self.estadisticas.get('semaforos_total', 0)}<br>
-            <b>Tráfico:</b> {self.estadisticas.get('trafico', {}).get('descripcion', 'N/A')}<br>
-            <br>
-            🔴 Intersección compleja<br>
-            🟠 Intersección en T<br>
-            🔵 Intersección simple
+                        font-size:13px; padding: 15px; border-radius: 5px;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+            <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 16px;">Análisis de Tráfico - {self.ciudad}</h4>
+            <div style="line-height: 1.8;">
+                <b>Intersecciones:</b> {self.estadisticas.get('intersecciones', 0):,}<br>
+                <b>Calles:</b> {self.estadisticas.get('calles_nombradas', 0):,}<br>
+                <b>Semáforos:</b> {self.estadisticas.get('semaforos_total', 0):,}<br>
+                <b>Tráfico:</b> {self.estadisticas.get('trafico', {}).get('descripcion', 'N/A')}<br>
+            </div>
+            <hr style="margin: 10px 0; border: none; border-top: 1px solid #ccc;">
+            <div style="font-size: 12px;">
+                🔴 Intersección compleja<br>
+                🟠 Intersección en T<br>
+                🔵 Intersección simple
+            </div>
             </div>
             '''
             m.get_root().html.add_child(folium.Element(info_html))
